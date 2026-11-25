@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bovinu's Grill · Atendimento</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="floor">
+  <header class="topbar">
+    <div class="top-left">
+      <div class="brand">
+        <span class="logo">BOVINU'S <b>GRILL</b></span>
+        <span class="sub">Painel de atendimento · Salão</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <div class="clock" id="clock">--:--:--</div>
+      <a class="btn ghost" href="caixa.html">Caixa</a>
+      <a class="btn ghost" href="index.html">Cozinha</a>
+      <button class="btn" id="btnSound">🔔 Alertas</button>
+    </div>
+  </header>
+
+  <section class="statusbar">
+    <div class="pill conn ok" id="pillConn">● Online</div>
+    <div class="pill" id="pillTotal">Mesas: –</div>
+    <div class="pill ok" id="pillLivre">Livres: –</div>
+    <div class="pill danger" id="pillOcupada">Ocupadas: –</div>
+    <div class="pill warn" id="pillLiberada">Liberadas: –</div>
+  </section>
+
+  <main>
+    <div id="banner"></div>
+    <div class="mesa-grid" id="grid"></div>
+  </main>
+
+  <div class="qr-modal" id="qrModal">
+    <div class="qr-card">
+      <h3 id="qrTitle">Mesa</h3>
+      <img id="qrImg" alt="QR Code da mesa">
+      <p id="qrUrl"></p>
+      <button class="btn" id="qrClose" style="margin-top:12px">Fechar</button>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+  <footer class="foot">O garçom escaneia o QR da mesa para ocupar. O caixa libera o pagamento e o salão apita.</footer>
+  <script src="atendimento.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+bovinus.db
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.vercel
+cloudflared.exe

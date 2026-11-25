@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BovinuScale · Relatório do Dia</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-left">
+      <div class="brand">
+        <span class="logo">BOVINU'S <b>GRILL</b></span>
+        <span class="sub">BovinuScale · Relatório de Consumo</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <div class="daybadge" id="dayName">—</div>
+      <a class="btn ghost" href="index.html">← Painel da cozinha</a>
+      <button class="btn" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+  </header>
+
+  <section class="statusbar">
+    <div class="pill" id="unit">Unidade: –</div>
+    <label class="pill" style="display:flex;gap:8px;align-items:center">
+      Data: <input type="date" id="datePick" style="background:var(--ink);border:1px solid var(--line);color:var(--cream);border-radius:6px;padding:4px 8px">
+    </label>
+    <div class="spacer"></div>
+    <button class="btn ghost" id="btnCsv">⬇ Exportar CSV</button>
+    <button class="btn" id="btnReload">Atualizar</button>
+  </section>
+
+  <div class="report-wrap">
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="kpiTotal">–</div><div class="l">Consumo total (kg)</div></div>
+      <div class="kpi"><div class="v" id="kpiPorcoes">–</div><div class="l">Porções servidas (est.)</div></div>
+      <div class="kpi"><div class="v" id="kpiRefills">–</div><div class="l">Reposições no dia</div></div>
+      <div class="kpi"><div class="v" id="kpiSobra">–</div><div class="l">Sobra em panela (kg)</div></div>
+      <div class="kpi"><div class="v" id="kpiPico">–</div><div class="l">Horário de pico</div></div>
+    </div>
+
+    <h2 style="font-size:16px;margin:8px 0 12px">Consumo por horário</h2>
+    <div class="chart" id="hourChart"></div>
+
+    <h2 style="font-size:16px;margin:16px 0 12px">Consumo por prato</h2>
+    <div class="chart" id="chart"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Balança</th><th>Prato</th><th>Local</th>
+          <th class="num">Consumido</th><th class="num">Porções (est.)</th>
+          <th class="num">Reposições</th><th class="num">Em panela agora</th><th class="num">Leituras</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">TOTAL DO DIA</td>
+          <td class="num" id="ftConsumo">–</td><td class="num" id="ftPorcoes">–</td>
+          <td class="num" id="ftRefills">–</td><td class="num" id="ftSobra">–</td><td class="num"></td>
+        </tr>
+      </tfoot>
+    </table>
+    <p class="last" style="margin-top:14px;color:var(--muted)">
+      Consumo = soma de todas as quedas de peso líquido medidas pelas balanças.
+      Reposições (adição de alimento) não contam como consumo. Porção média estimada em 120 g.
+      "Sobra" é o que restou na panela (potencial desperdício ao final do dia).
+    </p>
+  </div>
+
+  <footer class="foot">Grupo Bovinu's · Bovinu's Grill · Protótipo de hackathon · dados locais (SQLite)</footer>
+  <script src="report.js"></script>
+</body>
+</html>

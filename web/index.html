@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BovinuScale · Bovinu's Grill</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-left">
+      <button class="burger" id="btnSide" title="Mostrar/ocultar menu">☰</button>
+      <div class="brand">
+        <span class="logo">BOVINU'S <b>GRILL</b></span>
+        <span class="sub">BovinuScale · Monitoramento de Panelas</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <div class="daybadge" id="dayBadge">—</div>
+      <div class="clock" id="clock">--:--:--</div>
+      <a class="btn ghost" href="atendimento.html">Atendimento</a>
+      <a class="btn ghost" href="report.html">Relatório do dia →</a>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="side-title">Cardápio da Semana</div>
+    <div class="day-list" id="dayList"></div>
+    <div class="side-divider"></div>
+    <button class="manage-btn" id="btnManage">⚙ Gerenciar cardápio</button>
+    <div class="side-note">
+      Escolha o dia para ver os pratos daquele dia. Em "Gerenciar cardápio" você
+      adiciona ou remove pratos e configura cada balança (tara, capacidade e % de reposição).
+    </div>
+  </aside>
+
+  <section class="statusbar">
+    <div class="pill conn ok" id="pillConn">● Online</div>
+    <div class="pill" id="pillTotal">Panelas: –</div>
+    <div class="pill ok" id="pillOk">OK: –</div>
+    <div class="pill warn" id="pillWarn">Atenção: –</div>
+    <div class="pill danger" id="pillDanger">Repor agora: –</div>
+    <div class="spacer"></div>
+    <div class="next-check" id="nextCheck">Próximo acompanhamento: --:--</div>
+    <button class="btn ghost" id="btnFillAll" title="Enche todas as panelas do dia">Encher todas</button>
+    <button class="btn ghost" id="btnServe" title="Simula uma rodada de clientes">Simular serviço</button>
+    <button class="btn ghost" id="btnNotify" title="Ativar/desativar alerta sonoro de reposição">🔕 Alertas</button>
+    <button class="btn" id="btnSnapshot" title="Forçar um acompanhamento agora">Atualizar cozinha agora</button>
+  </section>
+
+  <main>
+    <div id="alerts" class="alerts"></div>
+    <div id="grid" class="grid"></div>
+    <p class="empty" id="empty" hidden>Nenhum prato cadastrado para este dia. Use "Gerenciar cardápio" para adicionar.</p>
+  </main>
+
+  <aside class="feed">
+    <h3>Acompanhamentos (10 em 10 min)</h3>
+    <ul id="feed"></ul>
+  </aside>
+
+  <footer class="foot">Grupo Bovinu's · Bovinu's Grill · Protótipo de hackathon · dados locais (SQLite)</footer>
+
+  <!-- Modal: Gerenciar cardápio -->
+  <div class="modal-overlay" id="manageModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>⚙ Gerenciar Cardápio &amp; Balanças</h2>
+        <button class="modal-x" id="btnCloseModal">×</button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulário -->
+        <div class="form-card">
+          <h3 id="formTitle">Adicionar prato</h3>
+          <div class="msg" id="formMsg"></div>
+          <div class="field">
+            <label>Nome do prato</label>
+            <input id="f_name" type="text" placeholder="Ex.: Picanha na Brasa">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>ID da balança</label>
+              <input id="f_scale" type="text" placeholder="BAL-13">
+            </div>
+            <div class="field">
+              <label>Estação / local</label>
+              <input id="f_loc" type="text" placeholder="Estação Grill">
+            </div>
+          </div>
+          <div class="field">
+            <label>Dias servidos</label>
+            <div class="daychips" id="f_days"></div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Tara (panela vazia)</label>
+              <div class="inline-unit">
+                <input id="f_tare" type="number" min="0" step="0.01" placeholder="1.5">
+                <select id="f_tare_unit"><option value="kg">kg</option><option value="g">g</option></select>
+              </div>
+            </div>
+            <div class="field">
+              <label>Capacidade (cheia)</label>
+              <div class="inline-unit">
+                <input id="f_cap" type="number" min="0" step="0.01" placeholder="6">
+                <select id="f_cap_unit"><option value="kg">kg</option><option value="g">g</option></select>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Repor quando ficar abaixo de (%)</label>
+            <input id="f_refill" type="number" min="1" max="100" step="1" value="25">
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-wide" id="btnAddDish">Adicionar ao cardápio</button>
+            <button class="mini" id="btnResetForm" style="display:none">Cancelar edição</button>
+          </div>
+        </div>
+
+        <!-- Lista de pratos -->
+        <div class="form-card">
+          <h3>Pratos cadastrados</h3>
+          <div class="dish-list" id="dishList"></div>
+          <div class="side-divider"></div>
+          <h3 style="margin-top:6px">Ferramentas de demonstração</h3>
+          <button class="mini del" id="btnResetDay">Zerar leituras de hoje</button>
+          <p style="font-size:11px;color:var(--muted);margin-top:8px">
+            Apaga as leituras e o consumo do dia atual (não remove pratos do cardápio).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
