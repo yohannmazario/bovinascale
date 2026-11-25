@@ -189,12 +189,33 @@ def lan_ip():
         return "127.0.0.1"
 
 
-def public_base():
+def public_base(handler=None):
+    forced = os.environ.get("PUBLIC_BASE", "").strip().rstrip("/")
+    if forced:
+        return forced
+    external = os.environ.get("RENDER_EXTERNAL_URL", "").strip().rstrip("/")
+    if external:
+        return external
+    host = ""
+    proto = "http"
+    if handler is not None:
+        raw_host = handler.headers.get("X-Forwarded-Host") or handler.headers.get("Host") or ""
+        host = raw_host.split(",")[0].strip()
+        raw_proto = handler.headers.get("X-Forwarded-Proto") or ""
+        proto = raw_proto.split(",")[0].strip() or "http"
+    hostname = host.split(":")[0].lower()
+    if hostname and hostname not in ("127.0.0.1", "localhost", "0.0.0.0"):
+        if not proto.startswith("http"):
+            proto = "http"
+        if hostname.endswith(("trycloudflare.com", "onrender.com", "koyeb.app")):
+            proto = "https"
+        return f"{proto}://{host}"
     return f"http://{lan_ip()}:{PORT}"
 
 
-def mesa_dict(row, now=None):
+def mesa_dict(row, now=None, base=None):
     now = now if now is not None else time.time()
+    base = base or public_base()
     occ = row["occupied_at"]
     return {
         "id": row["id"],
@@ -204,19 +225,20 @@ def mesa_dict(row, now=None):
         "occupied_at": occ,
         "paid_at": row["paid_at"],
         "ocupada_ha_s": int(now - occ) if occ and row["status"] == "ocupada" else None,
-        "checkin_url": f"{public_base()}/checkin.html?mesa={row['id']}",
+        "checkin_url": f"{base}/checkin.html?mesa={row['id']}",
     }
 
 
-def list_mesas(conn):
+def list_mesas(conn, base=None):
     now = time.time()
+    base = base or public_base()
     rows = conn.execute("SELECT * FROM mesas ORDER BY id").fetchall()
-    mesas = [mesa_dict(r, now) for r in rows]
+    mesas = [mesa_dict(r, now, base) for r in rows]
     resumo = {"livre": 0, "ocupada": 0, "liberada": 0, "total": len(mesas)}
     for m in mesas:
         if m["status"] in resumo:
             resumo[m["status"]] += 1
-    return {"base": public_base(), "resumo": resumo, "mesas": mesas}
+    return {"base": base, "resumo": resumo, "mesas": mesas}
 
 
 # ----------------------------------------------------------------------------
@@ -614,7 +636,7 @@ class Handler(BaseHTTPRequestHandler):
 
         if p == "/api/mesas":
             with DB_LOCK, db() as conn:
-                return self._json(list_mesas(conn))
+                return self._json(list_mesas(conn, public_base(self)))
 
         mesa_match = re.fullmatch(r"/api/mesas/(\d+)(?:/(qr\.svg))?$", p)
         if mesa_match and mesa_match.group(2) == "qr.svg":
@@ -623,7 +645,7 @@ class Handler(BaseHTTPRequestHandler):
                 row = conn.execute("SELECT * FROM mesas WHERE id=?", (mid,)).fetchone()
             if row is None:
                 return self._json({"error": "mesa nao encontrada"}, 404)
-            svg = qr_svg(mesa_dict(row)["checkin_url"]).encode("utf-8")
+            svg = qr_svg(mesa_dict(row, base=public_base(self))["checkin_url"]).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "image/svg+xml")
             self.send_header("Content-Length", str(len(svg)))
