@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BovinuScale · 5 slides</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#000; font-family:"Segoe UI",Arial,sans-serif; color:#f7ede4; }
+  .slide { display:none; min-height:100vh; padding:56px 72px; background:
+    radial-gradient(900px 400px at 100% 0%, #3a201a, transparent 50%), #140d0b; }
+  .slide.on { display:flex; flex-direction:column; }
+  .kicker { color:#C8102E; font-weight:900; letter-spacing:2px; font-size:14px; }
+  h1 { font-size:46px; line-height:1.1; margin:14px 0 22px; max-width:16ch; }
+  ul { font-size:24px; line-height:1.45; padding-left:22px; max-width:18em; }
+  li { margin:8px 0; }
+  .gold { color:#E8B04B; }
+  .foot { margin-top:auto; color:#c9b4a8; font-size:14px; }
+  .cols { display:grid; grid-template-columns:1.1fr .9fr; gap:36px; align-items:center; }
+  .box { background:#2b1b17; border:1px solid #422a24; border-left:5px solid #C8102E; border-radius:12px; padding:16px 18px; margin:10px 0; font-size:20px; }
+</style>
+</head>
+<body>
+<section class="slide on">
+  <div class="kicker">BOVINU'S GRILL · SLIDE 1 DE 5</div>
+  <h1>O buffet esvazia sem a cozinha ver.</h1>
+  <ul>
+    <li>A panela acaba no meio do serviço.</li>
+    <li>A sobra do fim do dia não é medida por prato.</li>
+    <li>No salão, mesa livre, ocupada e paga não aparecem no mesmo lugar.</li>
+  </ul>
+  <p class="foot">Setas do teclado mudam o slide.</p>
+</section>
+<section class="slide">
+  <div class="kicker">SLIDE 2 DE 5 · DESENVOLVIMENTO</div>
+  <h1>Cinco passos até o sistema.</h1>
+  <ul>
+    <li>Servidor Python e banco SQLite.</li>
+    <li>Peso da balança vira alimento disponível.</li>
+    <li>Painel da cozinha, de 10 em 10 minutos.</li>
+    <li>Relatório de consumo por balança.</li>
+    <li>QR da mesa, caixa e alerta sonoro.</li>
+  </ul>
+  <p class="foot">Cada passo ficou utilizável antes do seguinte.</p>
+</section>
+<section class="slide">
+  <div class="kicker">SLIDE 3 DE 5 · ESTRUTURA</div>
+  <h1>Uma API, três telas.</h1>
+  <div class="cols">
+    <div>
+      <div class="box">Balança e QR entram pela API.</div>
+      <div class="box">O SQLite guarda panela, pesagem e mesa.</div>
+      <div class="box">Cozinha, relatório, salão e caixa leem o mesmo dado.</div>
+    </div>
+    <div>
+      <p class="gold" style="font-size:22px;font-weight:800;margin-bottom:8px">Arquivos</p>
+      <ul style="font-size:20px">
+        <li>server.py</li>
+        <li>web/</li>
+        <li>bovinus.db</li>
+      </ul>
+    </div>
+  </div>
+  <p class="foot">Diagrama completo no documento de detalhamento.</p>
+</section>
+<section class="slide">
+  <div class="kicker">SLIDE 4 DE 5 · INTEGRAÇÃO</div>
+  <h1>Cozinha, salão e caixa no mesmo fluxo.</h1>
+  <ul>
+    <li>A balança avisa a cozinha e alimenta o relatório.</li>
+    <li>O QR do garçom marca a mesa como ocupada.</li>
+    <li>O pagamento no caixa libera a mesa.</li>
+    <li>O salão apita e a equipe limpa a mesa.</li>
+  </ul>
+  <p class="foot">Reposição de panela não entra como consumo.</p>
+</section>
+<section class="slide">
+  <div class="kicker">SLIDE 5 DE 5 · APRESENTAÇÃO FINAL</div>
+  <h1>O que a banca vê na prática.</h1>
+  <ul>
+    <li>Panela baixa vira alerta de repor agora.</li>
+    <li>O dia fecha com quilos, porções e sobra.</li>
+    <li>Mesa 21 ocupada no segundo do QR.</li>
+    <li>Pagamento no caixa, apito no salão.</li>
+  </ul>
+  <p class="foot">BovinuScale · protótipo pronto para demonstração.</p>
+</section>
+<script>
+  const slides = [...document.querySelectorAll(".slide")];
+  let i = 0;
+  function show(n){ i = (n + slides.length) % slides.length; slides.forEach((s,k)=>s.classList.toggle("on", k===i)); }
+  document.addEventListener("keydown", (e)=>{
+    if (e.key === "ArrowRight" || e.key === " ") show(i+1);
+    if (e.key === "ArrowLeft") show(i-1);
+  });
+</script>
+</body>
+</html>

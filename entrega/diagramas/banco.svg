@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 220" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="980" height="220" rx="16" fill="#1b100d"/>
+  <text x="24" y="34" fill="#E8B04B" font-size="16" font-weight="700">BANCO DE DADOS · bovinus.db</text>
+  <g font-size="13">
+    <rect x="20" y="58" width="220" height="140" rx="10" fill="#2b1b17" stroke="#422a24"/>
+    <text x="32" y="82" fill="#C8102E" font-weight="800">pots</text>
+    <text x="32" y="106" fill="#f7ede4">prato, balança, tara</text>
+    <text x="32" y="126" fill="#f7ede4">capacidade, % de repor</text>
+    <text x="32" y="146" fill="#f7ede4">dias da semana</text>
+    <rect x="260" y="58" width="220" height="140" rx="10" fill="#2b1b17" stroke="#422a24"/>
+    <text x="272" y="82" fill="#C8102E" font-weight="800">readings</text>
+    <text x="272" y="106" fill="#f7ede4">peso bruto e líquido</text>
+    <text x="272" y="126" fill="#f7ede4">data e horário</text>
+    <text x="272" y="146" fill="#f7ede4">base do consumo</text>
+    <rect x="500" y="58" width="220" height="140" rx="10" fill="#2b1b17" stroke="#422a24"/>
+    <text x="512" y="82" fill="#C8102E" font-weight="800">kitchen_updates</text>
+    <text x="512" y="106" fill="#f7ede4">check de 10 em 10 min</text>
+    <text x="512" y="126" fill="#f7ede4">percentual e status</text>
+    <text x="512" y="146" fill="#f7ede4">precisa repor?</text>
+    <rect x="740" y="58" width="220" height="140" rx="10" fill="#2b1b17" stroke="#422a24"/>
+    <text x="752" y="82" fill="#C8102E" font-weight="800">mesas</text>
+    <text x="752" y="106" fill="#f7ede4">número e cadeiras</text>
+    <text x="752" y="126" fill="#f7ede4">livre, ocupada, liberada</text>
+    <text x="752" y="146" fill="#f7ede4">horário de ocupação e pago</text>
+  </g>
+</svg>

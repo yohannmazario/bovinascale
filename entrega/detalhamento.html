@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BovinuScale · Detalhamento da solução</title>
+<style>
+  :root { --brand:#C8102E; --gold:#E8B04B; --ink:#1a120f; --muted:#5c514a; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI",Arial,sans-serif; color:var(--ink); background:#f6efe8; }
+  header { background:#140d0b; color:#f7ede4; padding:36px 8vw 28px; border-bottom:6px solid var(--brand); }
+  header .logo { color:var(--brand); font-weight:900; letter-spacing:1px; }
+  header h1 { margin:8px 0 6px; font-size:34px; }
+  header p { margin:0; color:#c9b4a8; }
+  main { width:min(980px,92vw); margin:28px auto 64px; }
+  section { background:#fff; border-radius:16px; padding:28px 32px; margin-bottom:18px; box-shadow:0 8px 24px #0001; }
+  h2 { margin:0 0 12px; font-size:22px; border-left:5px solid var(--brand); padding-left:10px; }
+  h3 { margin:18px 0 8px; font-size:16px; }
+  p, li { line-height:1.55; }
+  ul { margin:8px 0 0; padding-left:18px; }
+  .muted { color:var(--muted); font-size:14px; }
+  figure { margin:16px 0; }
+  img.shot { width:100%; border-radius:12px; border:1px solid #eadfd4; }
+  figcaption { font-size:13px; color:var(--muted); margin-top:6px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid #efe6dc; vertical-align:top; }
+  th { background:#faf6f2; }
+  a { color:var(--brand); font-weight:700; }
+  code { background:#f6efe8; padding:1px 5px; border-radius:4px; }
+  .video { width:100%; border-radius:12px; background:#000; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">BOVINU'S GRILL</div>
+  <h1>BovinuScale · Detalhamento e desenvolvimento</h1>
+  <p>Solução prática para o buffet e para o salão. Documento de avaliação.</p>
+</header>
+<main>
+
+<section>
+  <h2>1. Descrição do problema</h2>
+  <p>No buffet de uma churrascaria, cada panela esvazia em ritmo diferente. A cozinha só percebe a falta quando o cliente já encontrou a cuba vazia, ou repõe cedo demais e aumenta a sobra no fim do serviço.</p>
+  <p>Não havia um registro simples do que foi de fato consumido em cada panela ao longo do dia. Sem esse número, a casa não compara pratos, não enxerga o horário de pico e não separa consumo de reposição.</p>
+  <p>No salão, o problema é outro e acontece ao mesmo tempo: a equipe não tem uma visão única de qual mesa está livre, ocupada ou já paga. O garçom anota a chegada de um jeito, o caixa baixa a conta de outro, e a mesa demora a ser liberada para o próximo cliente.</p>
+</section>
+
+<section>
+  <h2>2. Solução proposta</h2>
+  <p>O BovinuScale coloca uma balança debaixo de cada panela e um painel único para a casa. O software tem duas frentes ligadas ao mesmo servidor:</p>
+  <ul>
+    <li><strong>Cozinha.</strong> A cada 10 minutos o painel mostra quanto ainda há em cada panela e sinaliza a reposição. No fim do dia, o relatório soma o que foi consumido por balança.</li>
+    <li><strong>Salão e caixa.</strong> 24 mesas numeradas, com 2 a 10 cadeiras. O garçom escaneia o QR da mesa e ela fica ocupada. Quando o caixa registra o pagamento, a mesa fica liberada e o painel do salão apita.</li>
+  </ul>
+  <p>O cardápio muda conforme o dia da semana. Pratos fixos ficam todos os dias. Pratos do dia, como a feijoada, só aparecem nos dias cadastrados. Cada balança é configurada em quilos ou gramas: tara da panela, capacidade e percentual de reposição.</p>
+  <p class="muted">Preços de cardápio, horários de unidade e promoções não foram inventados. O que não está medido pela balança ou cadastrado pela casa não aparece como número oficial.</p>
+</section>
+
+<section>
+  <h2>3. Passos de desenvolvimento</h2>
+  <ol>
+    <li>Servidor em Python, sem instalação extra além da biblioteca do QR, com banco SQLite local.</li>
+    <li>Recepção do peso da balança e cálculo do alimento líquido, descontando a tara da panela.</li>
+    <li>Painel da cozinha com status, alerta de reposição e acompanhamento de 10 em 10 minutos.</li>
+    <li>Relatório do dia: consumo, porções estimadas, reposições, sobra e horário de pico.</li>
+    <li>Cardápio por dia da semana e cadastro metrificado de cada balança.</li>
+    <li>Painel do salão, QR de check-in do garçom e tela do caixa com alerta sonoro de mesa liberada.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>4. Estrutura e integração</h2>
+  <figure><img src="diagramas/arquitetura.svg" alt="Arquitetura do BovinuScale"></figure>
+  <figure><img src="diagramas/fluxo-salao.svg" alt="Fluxo de atendimento das mesas"></figure>
+  <p>Cozinha, salão e caixa não são sistemas separados. Os três leem e gravam o mesmo servidor. A balança envia o peso. O QR muda o status da mesa. O caixa dispara a liberação. O painel do salão consulta esse status a cada 2 segundos e apita só quando uma mesa acaba de ser paga.</p>
+  <p>A integração com a balança real é um único envio:</p>
+  <p><code>POST /api/readings</code> com o identificador da balança e o peso bruto em gramas. No protótipo, o mesmo efeito é simulado no próprio card da panela.</p>
+</section>
+
+<section>
+  <h2>5. Banco de dados</h2>
+  <figure><img src="diagramas/banco.svg" alt="Tabelas do banco"></figure>
+  <table>
+    <thead><tr><th>Tabela</th><th>Para que serve</th></tr></thead>
+    <tbody>
+      <tr><td>pots</td><td>Prato, balança, tara, capacidade, percentual de reposição e dias servidos.</td></tr>
+      <tr><td>readings</td><td>Cada pesagem. O consumo do dia é a soma das quedas de peso. Subida de peso é reposição, não consumo.</td></tr>
+      <tr><td>kitchen_updates</td><td>Histórico dos acompanhamentos feitos de 10 em 10 minutos.</td></tr>
+      <tr><td>mesas</td><td>Número, quantidade de cadeiras e status: livre, ocupada ou liberada, com os horários.</td></tr>
+    </tbody>
+  </table>
+  <p class="muted">Arquivo físico: <code>bovinus.db</code>, criado na primeira execução. Código: <code>server.py</code>, telas em <code>web/</code>.</p>
+</section>
+
+<section>
+  <h2>6. Capturas da solução</h2>
+  <figure>
+    <img class="shot" src="capturas/01-cozinha.png" alt="Painel da cozinha">
+    <figcaption>1. Cozinha. O pão de alho chegou a 9,3% e o painel pediu reposição. A feijoada aparece só na quarta e no sábado.</figcaption>
+  </figure>
+  <figure>
+    <img class="shot" src="capturas/02-relatorio.png" alt="Relatório do dia">
+    <figcaption>2. Relatório do dia por balança, com consumo, porções, sobra e horário de pico.</figcaption>
+  </figure>
+  <figure>
+    <img class="shot" src="capturas/03-atendimento.png" alt="Painel do salão">
+    <figcaption>3. Salão. 24 mesas numeradas, QR em cada uma, status livre, ocupada ou liberada.</figcaption>
+  </figure>
+  <figure>
+    <img class="shot" src="capturas/04-caixa.png" alt="Tela do caixa">
+    <figcaption>4. Caixa. O pagamento das mesas ocupadas libera a mesa para a equipe do salão.</figcaption>
+  </figure>
+  <figure>
+    <img class="shot" src="capturas/05-checkin.png" alt="Check-in pelo QR">
+    <figcaption>5. Tela do garçom depois de escanear o QR. A mesa 21 ficou ocupada na hora.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>7. Vídeo da solução prática</h2>
+  <p>Vídeo de 1 minuto e 22 segundos, narrado em português, com as telas reais do sistema.</p>
+  <p><a href="bovinascale-demo.mp4">Abrir o vídeo BovinuScale</a></p>
+  <video class="video" controls src="bovinascale-demo.mp4"></video>
+  <p class="muted">Enquanto o sistema local estiver ligado, o mesmo arquivo também abre em <a href="http://127.0.0.1:8000/bovinascale-demo.mp4">http://127.0.0.1:8000/bovinascale-demo.mp4</a>.</p>
+</section>
+
+<section>
+  <h2>8. Apresentação</h2>
+  <p>Cinco slides com o problema, os passos de desenvolvimento, a estrutura, a integração das frentes e o fechamento da demonstração.</p>
+  <p><a href="apresentacao.html">Abrir a apresentação no navegador</a> · arquivo <code>BovinuScale-apresentacao.pptx</code> na mesma pasta.</p>
+</section>
+
+<section>
+  <h2>9. Arquivos para a avaliação</h2>
+  <ul>
+    <li><code>server.py</code> — servidor, regras, banco e APIs.</li>
+    <li><code>web/</code> — cozinha, relatório, salão, caixa e check-in.</li>
+    <li><code>qr_svg.py</code> — geração do QR de cada mesa.</li>
+    <li><code>simulator.py</code> — simulação das balanças sem hardware.</li>
+    <li><code>bovinus.db</code> — banco gerado em execução.</li>
+    <li><code>entrega/</code> — este documento, capturas, diagramas, slides e vídeo.</li>
+  </ul>
+</section>
+
+</main>
+</body>
+</html>

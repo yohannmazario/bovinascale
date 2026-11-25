@@ -6,3 +6,4 @@ venv/
 .env
 .vercel
 cloudflared.exe
+entrega/_tmp_video/

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 180" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="980" height="180" rx="16" fill="#1b100d"/>
+  <text x="24" y="34" fill="#E8B04B" font-size="16" font-weight="700">FLUXO DO ATENDIMENTO</text>
+  <g font-size="13" font-weight="700" text-anchor="middle">
+    <rect x="20" y="70" width="140" height="64" rx="10" fill="#2b1b17" stroke="#3fbf6b"/>
+    <text x="90" y="98" fill="#f7ede4">Mesa livre</text>
+    <text x="90" y="118" fill="#c9b4a8" font-size="11" font-weight="500">aguardando</text>
+    <rect x="210" y="70" width="160" height="64" rx="10" fill="#2b1b17" stroke="#E8B04B"/>
+    <text x="290" y="98" fill="#f7ede4">Garçom lê o QR</text>
+    <text x="290" y="118" fill="#c9b4a8" font-size="11" font-weight="500">chegada do cliente</text>
+    <rect x="420" y="70" width="150" height="64" rx="10" fill="#2b1b17" stroke="#ff4d4d"/>
+    <text x="495" y="98" fill="#f7ede4">Mesa ocupada</text>
+    <text x="495" y="118" fill="#c9b4a8" font-size="11" font-weight="500">painel atualiza</text>
+    <rect x="620" y="70" width="160" height="64" rx="10" fill="#2b1b17" stroke="#E8B04B"/>
+    <text x="700" y="98" fill="#f7ede4">Pagamento no caixa</text>
+    <text x="700" y="118" fill="#c9b4a8" font-size="11" font-weight="500">registrar conta</text>
+    <rect x="830" y="70" width="130" height="64" rx="10" fill="#C8102E"/>
+    <text x="895" y="98" fill="#fff">Liberada</text>
+    <text x="895" y="118" fill="#ffd9de" font-size="11" font-weight="500">alerta sonoro</text>
+  </g>
+  <path d="M160 102 H210 M370 102 H420 M570 102 H620 M780 102 H830" stroke="#E8B04B" stroke-width="2" fill="none"/>
+</svg>
