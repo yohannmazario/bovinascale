@@ -1,3 +1,13 @@
+# Projeto Hackathon FMU Tech 2026.2
+
+**Grupo Concessionária Grills**  
+**Curso de Engenharia da Computação**
+
+| Nome | RA |
+| --- | --- |
+| Hellen Cristhine Souza Atanasio | 1821616 |
+| Yohann Madureira Mazario | 1755472 |
+
 # BovinuScale · Bovinu's Grill
 
 Protótipo do Grupo Bovinu's para o buffet e para o salão. Cada panela do buffet tem uma balança por baixo. O mesmo sistema numera as mesas, recebe o QR do garçom e avisa o salão quando a conta é paga.
