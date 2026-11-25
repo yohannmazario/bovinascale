@@ -1,73 +1,85 @@
-# BovinuScale · Bovinu's Grill — Monitoramento de Panelas por Balança
+# BovinuScale · Bovinu's Grill
 
-Protótipo de hackathon para o **Grupo Bovinu's** (identidade **Bovinu's Grill**) que resolve o **Tópico 1 – A Ideia**:
-cada panela do buffet tem uma **balança por baixo**, integrada a este software, com **2 atribuições**:
+Protótipo do Grupo Bovinu's para o buffet e para o salão. Cada panela do buffet tem uma balança por baixo. O mesmo sistema numera as mesas, recebe o QR do garçom e avisa o salão quando a conta é paga.
 
-1. **Acompanhamento de 10 em 10 minutos** — avisa a cozinha quanto de alimento
-   resta em cada panela e sinaliza a **necessidade de troca/reposição**.
-2. **Registro total do consumo por balança no final do dia** — relatório com o
-   quanto foi servido de cada prato.
+## Site público
 
-Feito em **Python puro (biblioteca padrão)** — não precisa instalar nada.
+O sistema abre de qualquer lugar, sem instalar nada:
 
----
+| Tela | Endereço |
+| --- | --- |
+| Cozinha | https://bovinascale.onrender.com/ |
+| Salão | https://bovinascale.onrender.com/atendimento.html |
+| Caixa | https://bovinascale.onrender.com/caixa.html |
+| Relatório do dia | https://bovinascale.onrender.com/report.html |
+| Check-in do garçom | https://bovinascale.onrender.com/checkin.html?mesa=1 |
 
-## Como rodar
+O QR de cada mesa já aponta para esse endereço. Depois de cerca de 15 minutos sem visita, o site gratuito dorme e o próximo acesso leva cerca de um minuto. Quando o serviço reinicia, a demonstração volta ao cardápio e às mesas livres.
 
-### Opção rápida (demo)
+## Apresentação
+
+O material da banca está na pasta [`entrega/`](entrega/README.md).
+
+| Material | Onde abrir |
+| --- | --- |
+| Vídeo (1 min 22 s) | [Assistir no GitHub](entrega/bovinascale-demo.mp4) · [arquivo direto](https://yohannmazario.github.io/bovinascale/entrega/bovinascale-demo.mp4) |
+| PowerPoint (5 slides) | [BovinuScale-apresentacao.pptx](entrega/BovinuScale-apresentacao.pptx) |
+| Slides no navegador | [apresentacao.html](https://yohannmazario.github.io/bovinascale/entrega/apresentacao.html) |
+| Documento de avaliação | [detalhamento.html](https://yohannmazario.github.io/bovinascale/entrega/detalhamento.html) |
+
+[![Demonstração do BovinuScale](entrega/capturas/01-cozinha.png)](entrega/bovinascale-demo.mp4)
+
+O vídeo percorre a cozinha, o relatório, o salão, o QR do garçom e o caixa. As setas do teclado passam os slides no navegador.
+
+| Slide | Conteúdo |
+| --- | --- |
+| 1. Problema | A panela acaba sem a cozinha ver, e o salão não vê a mesa paga. |
+| 2. Desenvolvimento | Do servidor até o QR, o caixa e o alerta sonoro. |
+| 3. Estrutura | Uma API, o banco e as telas no mesmo dado. |
+| 4. Integração | Balança, QR, pagamento e apito no mesmo fluxo. |
+| 5. Apresentação final | Alerta de reposição, fechamento do dia e mesa liberada. |
+
+Capturas e diagramas ficam em [`entrega/capturas/`](entrega/capturas) e [`entrega/diagramas/`](entrega/diagramas).
+
+## O que o sistema faz
+
+1. **Acompanhamento de 10 em 10 minutos.** A cozinha vê quanto ainda há em cada panela e se precisa repor.
+2. **Consumo do dia por balança.** O relatório soma o que foi servido. Reposição não conta como consumo.
+3. **Salão e caixa.** 24 mesas, de 2 a 10 cadeiras. O QR marca a mesa ocupada. O pagamento libera a mesa e o salão apita.
+
+O cardápio muda com o dia da semana. Cada balança é cadastrada em quilos ou gramas: tara, capacidade e percentual de reposição.
+
+## Como rodar nesta máquina
+
 ```powershell
-.\start.ps1                # acompanhamento a cada 30s
-.\start.ps1 -Intervalo 15  # mais rápido
-.\start.ps1 -Simulador     # também abre o simulador automático
+pip install -r requirements.txt
+.\start.ps1
 ```
 
-### Manual
+Ou, no ritmo real de 10 minutos:
+
 ```powershell
 python server.py
 ```
-Abra no navegador:
-- Painel da cozinha: http://127.0.0.1:8000/
-- Relatório do dia: http://127.0.0.1:8000/report.html
 
-Por padrão o acompanhamento roda **de 10 em 10 minutos** (600 s). Para a demo:
-```powershell
-$env:MONITOR_INTERVAL=15; python server.py
-```
+Nesta máquina:
 
----
+- Cozinha: http://127.0.0.1:8000/
+- Salão: http://127.0.0.1:8000/atendimento.html
+- Caixa: http://127.0.0.1:8000/caixa.html
+- Relatório: http://127.0.0.1:8000/report.html
 
-## Funcionalidades
+`.\start.ps1 -Intervalo 15` encurta o acompanhamento. `.\start.ps1 -Simulador` também envia pesos sozinho.
 
-### Painel da cozinha
-- Status ao vivo por panela (% , kg, status OK / Atenção / Repor)
-- **Slider + botões** para simular a balança (servir, ±250 g, encher, esvaziar)
-- **Peso exato em gramas** digitável em cada card
-- **Previsão de esgotamento** (minutos até o limite de reposição)
-- **Mini-gráfico** da tendência de peso
-- **Porções restantes** estimadas (~120 g)
-- **Alertas sonoros + toast** quando uma panela entra em “Repor”
-- **Indicador Online/Offline**
-- **Encher todas** / **Simular serviço** (modo demonstração)
+## Telas
 
-### Cardápio por dia da semana
-- Menu lateral com Segunda–Domingo e contagem de pratos
-- Cardápio variável (pratos fixos + pratos do dia)
-- **Gerenciar cardápio**: adicionar, editar e remover pratos
-- Balança **metrificada**: tara e capacidade em kg/g + % de reposição
-- **Zerar leituras de hoje** (útil na apresentação)
+- **Cozinha:** percentual, quilos, status, slider da balança, peso exato, previsão de esgotamento, porções restantes e alerta sonoro.
+- **Cardápio:** dias da semana, incluir, editar e retirar pratos, tara e capacidade em kg/g.
+- **Relatório:** quilos, porções, reposições, sobra, horário de pico, CSV e impressão.
+- **Salão:** mesas numeradas, QR, status livre, ocupada ou liberada, e apito quando o caixa libera.
+- **Caixa:** registra o pagamento das mesas ocupadas.
 
-### Relatório do dia
-- Consumo total (kg), porções, reposições, **sobra** e **horário de pico**
-- Gráfico de consumo **por horário** e **por prato**
-- Seletor de data
-- **Exportar CSV** e Imprimir/PDF
-
----
-
-## Integração com a balança real
-
-Cada balança (ou um ESP32/Arduino com célula de carga **HX711**) só precisa
-enviar o peso bruto em gramas:
+## Balança real
 
 ```http
 POST /api/readings
@@ -76,32 +88,41 @@ Content-Type: application/json
 { "scale_id": "BAL-01", "gross_g": 7234.5 }
 ```
 
-Alternativa (UI / testes): enviar o peso líquido direto:
-```json
-{ "scale_id": "BAL-01", "net_g": 6000 }
-```
+O peso líquido também pode ser enviado direto: `{ "scale_id": "BAL-01", "net_g": 6000 }`.
 
----
+O consumo do dia é a soma das quedas de peso. Quando o peso sobe, a casa repôs a panela.
+
+| Status | Faixa |
+| --- | --- |
+| OK | acima de 30% |
+| Atenção | 15% a 30% |
+| Repor agora | 15% ou menos |
+| Vazia | 5% ou menos |
+
+Cada panela ainda respeita o próprio `refill_pct`.
 
 ## API
 
-| Método | Rota                   | Descrição                                        |
-|--------|------------------------|--------------------------------------------------|
-| POST   | `/api/readings`        | Balança envia uma leitura de peso                |
-| GET    | `/api/status?weekday=N`| Estado das panelas de um dia (Seg=0 … Dom=6)     |
-| GET    | `/api/kitchen-updates` | Histórico dos acompanhamentos (10 em 10 min)     |
-| GET    | `/api/report`          | Relatório de consumo (`?day=AAAA-MM-DD`)         |
-| GET    | `/api/report.csv`      | Exportação CSV do relatório                      |
-| GET    | `/api/pots`            | Lista completa do cardápio                       |
-| POST   | `/api/pots`            | Cadastra/edita um prato (com `weekdays`)         |
-| DELETE | `/api/pots?scale_id=X` | Remove um prato do cardápio                      |
-| POST   | `/api/snapshot`        | Força um acompanhamento imediato                 |
-| POST   | `/api/reset`           | Zera leituras do dia                             |
-| POST   | `/api/demo/fill`       | Enche todas as panelas do dia                    |
-| POST   | `/api/demo/serve`      | Simula uma rodada de consumo                     |
+| Método | Rota | Uso |
+| --- | --- | --- |
+| POST | `/api/readings` | Leitura da balança |
+| GET | `/api/status?weekday=N` | Panelas do dia (segunda = 0) |
+| GET | `/api/kitchen-updates` | Histórico dos acompanhamentos |
+| GET | `/api/report` | Consumo do dia (`?day=AAAA-MM-DD`) |
+| GET | `/api/report.csv` | O mesmo relatório em CSV |
+| GET | `/api/pots` | Cardápio |
+| POST | `/api/pots` | Cadastra ou edita um prato |
+| DELETE | `/api/pots?scale_id=X` | Remove um prato |
+| GET | `/api/mesas` | Mesas, cadeiras e status |
+| GET | `/api/mesas/1/qr.svg` | QR da mesa |
+| POST | `/api/mesas/1/ocupar` | Check-in do garçom |
+| POST | `/api/mesas/1/pagar` | Pagamento no caixa |
+| POST | `/api/mesas/1/disponibilizar` | Mesa livre de novo |
+| POST | `/api/demo/fill` | Enche as panelas do dia |
+| POST | `/api/demo/serve` | Simula uma rodada de consumo |
 
-### Cadastrar um prato
-`weekdays` usa o padrão Segunda=0 … Domingo=6.
+Exemplo de prato. Os dias seguem segunda = 0 até domingo = 6.
+
 ```json
 {
   "scale_id": "BAL-13",
@@ -114,40 +135,24 @@ Alternativa (UI / testes): enviar o peso líquido direto:
 }
 ```
 
----
-
-## Como o consumo é calculado
-
-O consumo do dia é a **soma de todas as quedas** de peso líquido medidas pela
-balança. Quando o peso **sobe** (a cozinha repôs a panela), isso é contado como
-**reposição**, não como consumo.
-
-## Status das panelas
-
-| Status        | Faixa         | Cor      |
-|---------------|---------------|----------|
-| OK            | > 30%         | Verde    |
-| Atenção       | 15% – 30%     | Amarelo  |
-| Repor agora   | ≤ 15%         | Vermelho |
-| Vazia         | ≤ 5%          | Vermelho |
-
-Além disso, cada panela tem seu próprio limite `refill_pct` que dispara o alerta
-de **REPOR** no painel.
-
----
-
 ## Arquivos
 
 ```
-server.py       # servidor + API + banco (SQLite) + monitor de 10 min
-simulator.py    # simulador das balanças (demo sem hardware)
-start.ps1       # partida rápida para demonstração
-web/
-  index.html    # painel da cozinha
-  report.html   # relatório de consumo do dia
-  app.js, report.js, styles.css, favicon.svg
-bovinus.db      # criado automaticamente na primeira execução
+server.py            servidor, banco, monitor e APIs
+qr_svg.py            QR de cada mesa
+simulator.py         pesos sem hardware
+start.ps1            demonstração local
+render.yaml          publicação do site
+requirements.txt     biblioteca do QR
+web/                 cozinha, relatório, salão, caixa e check-in
+entrega/
+  README.md
+  bovinascale-demo.mp4
+  BovinuScale-apresentacao.pptx
+  apresentacao.html
+  detalhamento.html
+  capturas/
+  diagramas/
 ```
 
-> Protótipo para validação da ideia. Em produção, trocar SQLite por um banco
-> central e as balanças passam a enviar leituras reais via rede (Wi-Fi).
+O arquivo `bovinus.db` nasce na primeira execução e não entra no repositório.
